@@ -31,6 +31,9 @@ export default {
       results: []
     };
   },
+  mounted() {
+    this.loadExperiences();
+  },
   methods: {
     loadExperiences() {
       fetch(process.env.VUE_APP_FIREBASE_REALTIME_DATABASE)
