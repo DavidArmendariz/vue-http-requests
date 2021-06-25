@@ -8,10 +8,11 @@
         >
       </div>
       <p v-if="isLoading">Loading...</p>
-      <ul v-else-if="!isLoading && (!results || results.length === 0)">
-        <p>No stored experiences found. Start adding some survey results.</p>
-      </ul>
-      <ul v-else-if="!isLoading && results && results.length > 0">
+      <p v-else-if="!isLoading && error">{{ error }}</p>
+      <p v-else-if="!isLoading && (!results || results.length === 0)">
+        No stored experiences found. Start adding some survey results.
+      </p>
+      <ul v-else>
         <survey-result
           v-for="result in results"
           :key="result.id"
@@ -33,7 +34,8 @@ export default {
   data() {
     return {
       results: [],
-      isLoading: false
+      isLoading: false,
+      error: null
     };
   },
   mounted() {
@@ -50,6 +52,7 @@ export default {
         })
         .then(data => {
           this.isLoading = false;
+          this.error = null;
           const results = [];
           for (const id in data) {
             const { name, rating } = data[id];
@@ -60,6 +63,10 @@ export default {
             });
           }
           this.results = results;
+        })
+        .catch(() => {
+          this.error = 'Failed to fetch data';
+          this.isLoading = false;
         });
     }
   }
